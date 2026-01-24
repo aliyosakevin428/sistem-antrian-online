@@ -1,0 +1,158 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useViewMode } from '@/hooks/use-view-mode';
+import AppLayout from '@/layouts/app-layout';
+import { capitalizeWords } from '@/lib/utils';
+import { User } from '@/types/user';
+import { Link, router } from '@inertiajs/react';
+import { Archive, Edit, Filter, Folder, Grid2X2, TableIcon, Trash2 } from 'lucide-react';
+import { FC, useState } from 'react';
+import UserBulkDeleteDialog from './components/user-bulk-delete.dialog';
+import UserBulkEditSheet from './components/user-bulk-edit-sheet';
+import UserDeleteDialog from './components/user-delete-dialog';
+import UserFilterSheet from './components/user-filter-sheet';
+import UserFormSheet from './components/user-form-sheet';
+import UserItemCard from './components/user-item-card';
+
+type Props = {
+  users: User[];
+  query: { [key: string]: string };
+};
+
+const UserList: FC<Props> = ({ users, query }) => {
+  const [ids, setIds] = useState<number[]>([]);
+  const [cari, setCari] = useState('');
+
+  const { mode, toggle } = useViewMode();
+
+  return (
+    <AppLayout
+      title="Users"
+      description="Manage your users"
+      actions={[
+        {
+          title: capitalizeWords(mode) + ' view',
+          icon: mode === 'grid' ? Grid2X2 : TableIcon,
+          onClick: toggle,
+        },
+        {
+          title: 'Archived',
+          icon: Archive,
+          onClick: () => router.visit(route('user.archived')),
+        },
+      ]}
+    >
+      <div className="flex gap-2">
+        <Input placeholder="Search users..." value={cari} onChange={(e) => setCari(e.target.value)} />
+        <UserFilterSheet query={query}>
+          <Button>
+            <Filter />
+            Filter data
+            {Object.values(query).filter((val) => val && val !== '').length > 0 && (
+              <Badge variant="secondary">{Object.values(query).filter((val) => val && val !== '').length}</Badge>
+            )}
+          </Button>
+        </UserFilterSheet>
+        {ids.length > 0 && (
+          <>
+            <Button variant={'ghost'} disabled>
+              {ids.length} item selected
+            </Button>
+            <UserBulkEditSheet userIds={ids}>
+              <Button>
+                <Edit /> Edit selected
+              </Button>
+            </UserBulkEditSheet>
+            <UserBulkDeleteDialog userIds={ids}>
+              <Button variant={'destructive'}>
+                <Trash2 /> Delete selected
+              </Button>
+            </UserBulkDeleteDialog>
+          </>
+        )}
+        <UserFormSheet purpose="create" buttonLabel="Create new user" />
+      </div>
+      {mode === 'table' ? (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>
+                <Button variant={'ghost'} size={'icon'} asChild>
+                  <Label>
+                    <Checkbox
+                      checked={ids.length === users.length}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setIds(users.map((user) => user.id));
+                        } else {
+                          setIds([]);
+                        }
+                      }}
+                    />
+                  </Label>
+                </Button>
+              </TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role names</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users
+              .filter((user) => JSON.stringify(user).toLowerCase().includes(cari.toLowerCase()))
+              .map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Button variant={'ghost'} size={'icon'} asChild>
+                      <Label>
+                        <Checkbox
+                          checked={ids.includes(user.id)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setIds([...ids, user.id]);
+                            } else {
+                              setIds(ids.filter((id) => id !== user.id));
+                            }
+                          }}
+                        />
+                      </Label>
+                    </Button>
+                  </TableCell>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.roles?.flatMap((r) => r.name)?.join(', ')}</TableCell>
+                  <TableCell>
+                    <Button variant={'ghost'} size={'icon'}>
+                      <Link href={route('user.show', user.id)}>
+                        <Folder />
+                      </Link>
+                    </Button>
+                    <UserFormSheet purpose="duplicate" user={user} variant="icon" />
+                    <UserFormSheet purpose="edit" user={user} variant="icon" />
+                    <UserDeleteDialog user={user}>
+                      <Button variant={'ghost'} size={'icon'}>
+                        <Trash2 />
+                      </Button>
+                    </UserDeleteDialog>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <div className="grid-responsive grid gap-6">
+          {users.map((user) => (
+            <UserItemCard key={user.id} user={user} />
+          ))}
+        </div>
+      )}
+    </AppLayout>
+  );
+};
+
+export default UserList;
