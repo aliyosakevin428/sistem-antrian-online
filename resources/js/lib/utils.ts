@@ -133,3 +133,6 @@ export function formatRupiah(angka: number): string {
     minimumFractionDigits: 0,
   }).format(angka);
 }
+
+export const formatQueueNumber = (num: number, length = 3) =>
+    num.toString().padStart(length, '0');

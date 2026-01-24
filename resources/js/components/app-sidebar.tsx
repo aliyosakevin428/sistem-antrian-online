@@ -50,6 +50,12 @@ export function AppSidebar() {
               icon: BookOpenCheck,
               available: menus.service,
             },
+            {
+              title: 'Queue Settings',
+              href: route('queue-setting.index'),
+              icon: Database,
+              available: menus.queue_setting,
+            },
           ]}
           label="Dashboard"
         />

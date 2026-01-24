@@ -5,23 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 
-class Service extends Model
+class QueueSetting extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
 
 
-    //protected $table = 'services';
+    //protected $table = 'queue_settings';
 
     /*
     protected $fillable = [
-        'name',
-        'code',
-        'is_active'
+        'service_id',
+        'prefix',
+        'start_number',
+        'max_per_day',
+        'reset_daily'
     ];
     */
 
@@ -32,12 +32,12 @@ class Service extends Model
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'reset_daily' => 'boolean',
     ];
 
-    public function queueSetting()
-    {
-        return $this->hasOne(QueueSetting::class);
-    }
 
+        public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
 }

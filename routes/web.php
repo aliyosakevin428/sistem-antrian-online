@@ -9,6 +9,8 @@ use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\QueueSettingController;
+
 
 
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
@@ -36,6 +38,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('service/{service}/restore', [ServiceController::class, 'restore'])->name('service.restore');
     Route::delete('service/{service}/force-delete', [ServiceController::class, 'forceDelete'])->name('service.force-delete');
     Route::apiResource('service', ServiceController::class);
+    Route::put('queueSetting/bulk', [QueueSettingController::class, 'bulkUpdate'])->name('queueSetting.bulk.update');
+    Route::delete('queueSetting/bulk', [QueueSettingController::class, 'bulkDelete'])->name('queueSetting.bulk.destroy');
+    Route::apiResource('queue-setting', QueueSettingController::class);
 });
 
 require __DIR__.'/settings.php';
