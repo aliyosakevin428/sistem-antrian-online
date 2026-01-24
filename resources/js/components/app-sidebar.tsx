@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Database, KeySquare, LayoutGrid, Settings, Users } from 'lucide-react';
+import { BookOpen, BookOpenCheck, Database, KeySquare, LayoutGrid, Settings, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -44,12 +44,12 @@ export function AppSidebar() {
         <NavMain
           items={[
             ...mainNavItems,
-            // {
-            //   title: 'feature',
-            //   href: route('feature.index'),
-            //   icon: BookOpen,
-            //   available: menus.feature,
-            // },
+            {
+              title: 'Services',
+              href: route('service.index'),
+              icon: BookOpenCheck,
+              available: menus.service,
+            },
           ]}
           label="Dashboard"
         />
