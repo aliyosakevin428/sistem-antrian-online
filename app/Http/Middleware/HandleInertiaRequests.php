@@ -65,6 +65,9 @@ class HandleInertiaRequests extends Middleware
             'useSocialite' => config('template-starter.enable_socialite'),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'viewMode' => $request->hasCookie('viewMode') ? $request->cookie('viewMode') : 'table',
+            'flash' => [
+                'success_queue' => fn () => $request->session()->get('success_queue'),
+            ],
         ];
     }
 }

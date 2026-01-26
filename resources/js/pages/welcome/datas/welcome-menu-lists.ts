@@ -1,5 +1,5 @@
 import { NavItem } from '@/types';
-import { Home, UserSquare } from 'lucide-react';
+import { Home, TicketPlus, UserSquare } from 'lucide-react';
 
 export const welcomeMenuList: NavItem[] = [
   {
@@ -11,5 +11,10 @@ export const welcomeMenuList: NavItem[] = [
     title: 'About',
     href: route('about'),
     icon: UserSquare,
+  },
+  {
+    title: 'Ambil Antrian',
+    href: route('queue.take.page'),
+    icon: TicketPlus,
   },
 ];
