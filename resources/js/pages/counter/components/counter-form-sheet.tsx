@@ -7,15 +7,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { capitalizeWords, em } from '@/lib/utils';
 import { FormPurpose } from '@/types';
-import { QueueSetting } from '@/types/queue_setting';
-import { useForm, usePage } from '@inertiajs/react';
+import { Counter } from '@/types/counter';
+import { useForm } from '@inertiajs/react';
 import { Copy, Edit, LucideIcon, PlusSquare, X } from 'lucide-react';
 import { ComponentProps, FC, PropsWithChildren } from 'react';
 import { toast } from 'sonner';
-import { Service } from '@/types/service';
 
 type Props = PropsWithChildren & {
-  queue_setting?: QueueSetting;
+  counter?: Counter;
   icon?: LucideIcon;
   buttonLabel?: string;
   purpose: FormPurpose;
@@ -24,9 +23,9 @@ type Props = PropsWithChildren & {
   withChildren?: boolean;
 };
 
-const QueueSettingFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
+const CounterFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
   children,
-  queue_setting,
+  counter,
   purpose,
   variant = 'default',
   icon: Icon,
@@ -37,33 +36,30 @@ const QueueSettingFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
   withChildren = true,
 }) => {
 
-  const { services = [] } = usePage<{ services: Service[] }>().props;
+  // const { items = [] } = usePage<{ items: Item[] }>().props;
 
   const { data, setData, put, post, processing } = useForm({
-    service_id : queue_setting?.service_id ?? null,
-    prefix : queue_setting?.prefix ?? '',
-    start_number : queue_setting?.start_number ?? '',
-    max_queue : queue_setting?.max_queue ?? '',
-    reset_daily : queue_setting?.reset_daily ?? '',
+    name : counter?.name ?? '',
+    is_active : counter?.is_active ?? '',
 
   });
 
   const handleSubmit = () => {
     if (purpose === 'create' || purpose === 'duplicate') {
-      post(route('queue-setting.store'), {
+      post(route('counter.store'), {
         preserveScroll: true,
         onSuccess: () => {
-          toast.success('Queue Setting created successfully');
+          toast.success('User created successfully');
           onOpenChange?.(false);
           onSuccess?.();
         },
         onError: (e) => toast.error(em(e)),
       });
     } else {
-      put(route('queue-setting.update', queue_setting?.id), {
+      put(route('counter.update', counter?.id), {
         preserveScroll: true,
         onSuccess: () => {
-          toast.success('Queue Setting updated successfully');
+          toast.success('User updated successfully');
           onSuccess?.();
         },
         onError: (e) => toast.error(em(e)),
@@ -89,8 +85,8 @@ const QueueSettingFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
       )}
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{capitalizeWords(purpose)} data queue_setting</SheetTitle>
-          <SheetDescription>Form untuk {purpose} data queue_setting</SheetDescription>
+          <SheetTitle>{capitalizeWords(purpose)} data counter</SheetTitle>
+          <SheetDescription>Form untuk {purpose} data counter</SheetDescription>
         </SheetHeader>
         <ScrollArea className="flex-1 overflow-y-auto">
           <form
@@ -100,38 +96,13 @@ const QueueSettingFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
               handleSubmit();
             }}
           >
-            <FormControl label="Jenis Pelayanan">
-              <Select value={data.service_id ? data.service_id.toString() : ''} onValueChange={(value) => setData('service_id', Number(value))}>
+            <FormControl label="Nama Loket">
+              <Input type="text" placeholder="Enter Name" value={data.name} onChange={(e) => setData('name', e.target.value)} />
+            </FormControl>
+            <FormControl label="Keterangan">
+              <Select value={data.is_active ? '1' : '0'} onValueChange={(value) => setData('is_active', value === '1')}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Pilih Jenis Pelayanan" />
-                </SelectTrigger>
-                <SelectContent>
-                  {services.map((service) => (
-                    <SelectItem key={service.id} value={service.id.toString()}>
-                      {service.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormControl>
-            <FormControl label="Prefix">
-              <Input type="text" placeholder="Enter Prefix" value={data.prefix} onChange={(e) => setData('prefix', e.target.value)} />
-            </FormControl>
-            <FormControl label="Start Number">
-              <Input
-                type="number"
-                placeholder="Enter Start Number"
-                value={data.start_number}
-                onChange={(e) => setData('start_number', e.target.value)}
-              />
-            </FormControl>
-            <FormControl label="Max Per Day">
-              <Input type="number" placeholder="Enter Max Per Day" value={data.max_queue} onChange={(e) => setData('max_queue', e.target.value)} />
-            </FormControl>
-            <FormControl label="Reset Daily">
-              <Select value={data.reset_daily ? '1' : '0'} onValueChange={(value) => setData('reset_daily', value === '1')}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Reset Daily Status" />
+                  <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1">Active</SelectItem>
@@ -142,7 +113,7 @@ const QueueSettingFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
           </form>
         </ScrollArea>
         <SheetFooter>
-          <SubmitButton onClick={handleSubmit} label={`${capitalizeWords(purpose)} queue setting`} loading={processing} disabled={processing} />
+          <SubmitButton onClick={handleSubmit} label={`${capitalizeWords(purpose)} counter`} loading={processing} disabled={processing} />
           <SheetClose asChild>
             <Button variant={'outline'}>
               <X /> Batalin
@@ -154,4 +125,4 @@ const QueueSettingFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
   );
 };
 
-export default QueueSettingFormSheet;
+export default CounterFormSheet;

@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, BookOpenCheck, Database, KeySquare, LayoutGrid, ListOrdered, Settings, Users } from 'lucide-react';
+import { BookOpen, BookOpenCheck, Building2, Database, KeySquare, LayoutGrid, ListOrdered, Settings, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -61,6 +61,12 @@ export function AppSidebar() {
               href: route('queue.index'),
               icon: ListOrdered,
               available: menus.queue,
+            },
+            {
+              title: 'Daftar Loket',
+              href: route('counter.index'),
+              icon: Building2,
+              available: menus.counter,
             },
           ]}
           label="Dashboard"
