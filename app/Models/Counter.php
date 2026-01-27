@@ -40,9 +40,9 @@ class Counter extends Model
         return $this->hasMany(User::class);
     }
 
-    // public function queueCalls()
-    // {
-    //     return $this->hasMany(QueueCall::class);
-    // }
+    public function queueCalls()
+    {
+        return $this->hasMany(QueueCall::class);
+    }
 
 }

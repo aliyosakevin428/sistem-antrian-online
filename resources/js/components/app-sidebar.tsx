@@ -45,7 +45,7 @@ export function AppSidebar() {
           items={[
             ...mainNavItems,
             {
-              title: 'Jenis Layanan',
+              title: 'Daftar Layanan',
               href: route('service.index'),
               icon: BookOpenCheck,
               available: menus.service,
@@ -72,6 +72,12 @@ export function AppSidebar() {
               href: route('counter.index'),
               icon: Building2,
               available: menus.counter,
+            },
+            {
+              title: 'Antrian Dipanggil',
+              href: route('queue_calls.index'),
+              icon: Users,
+              available: menus.queue_call,
             },
           ]}
           label="Antrian"

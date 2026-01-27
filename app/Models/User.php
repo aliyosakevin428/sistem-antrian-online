@@ -60,6 +60,11 @@ class User extends Authenticatable implements HasMedia
         return $this->belongsTo(Counter::class);
     }
 
+    public function queueCalls()
+    {
+        return $this->hasMany(QueueCall::class);
+    }
+
     public function getAvatarAttribute()
     {
         $firstMedia = $this->getLastMediaUrl("avatar");

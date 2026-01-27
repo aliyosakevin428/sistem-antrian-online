@@ -12,10 +12,19 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\QueueSettingController;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\CounterController;
+use App\Http\Controllers\QueueCallsController;
 
 
-
-
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
 Route::get('/about', [WelcomeController::class, 'about'])->name('about');
@@ -53,13 +62,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('queue/bulk', [QueueController::class, 'bulkUpdate'])->name('queue.bulk.update');
     Route::delete('queue/bulk', [QueueController::class, 'bulkDelete'])->name('queue.bulk.destroy');
     Route::apiResource('queue', QueueController::class);
-    
+
     Route::put('counter/bulk', [CounterController::class, 'bulkUpdate'])->name('counter.bulk.update');
     Route::delete('counter/bulk', [CounterController::class, 'bulkDelete'])->name('counter.bulk.destroy');
     Route::get('counter/archived', [CounterController::class, 'archived'])->name('counter.archived');
     Route::put('counter/{counter}/restore', [CounterController::class, 'restore'])->name('counter.restore');
     Route::delete('counter/{counter}/force-delete', [CounterController::class, 'forceDelete'])->name('counter.force-delete');
     Route::apiResource('counter', CounterController::class);
+
+    Route::put('queue_calls/bulk', [QueueCallsController::class, 'bulkUpdate'])->name('queue_calls.bulk.update');
+    Route::delete('queue_calls/bulk', [QueueCallsController::class, 'bulkDelete'])->name('queue_calls.bulk.destroy');
+    Route::apiResource('queue_calls', QueueCallsController::class)->only(['index', 'destroy']); 
 });
 
 require __DIR__.'/settings.php';

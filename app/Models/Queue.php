@@ -38,4 +38,9 @@ class Queue extends Model
     {
         return $this->belongsTo(Service::class);
     }
+
+    public function queueCalls()
+    {
+        return $this->hasMany(QueueCall::class);
+    }
 }
