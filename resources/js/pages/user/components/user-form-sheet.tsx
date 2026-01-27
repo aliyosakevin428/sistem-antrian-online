@@ -5,9 +5,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { capitalizeWords, em } from '@/lib/utils';
 import { FormPurpose } from '@/types';
+import { Counter } from '@/types/counter';
 import { Role } from '@/types/role';
 import { User } from '@/types/user';
 import { useForm, usePage } from '@inertiajs/react';
@@ -37,7 +39,7 @@ const UserFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
   onOpenChange,
   withChildren = true,
 }) => {
-  const { roles = [] } = usePage<{ roles: Role[] }>().props;
+  const { roles = [], counters = [] } = usePage<{ roles: Role[]; counters: Counter[] }>().props;
 
   const { data, setData, put, post, reset, processing } = useForm({
     name: user?.name ?? '',
@@ -45,6 +47,7 @@ const UserFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
     password: user ? undefined : '',
     password_confirmation: user ? undefined : '',
     roles: user?.roles?.flatMap((r) => r.name) ?? [],
+    counter_id: user?.counter?.id ?? null,
   });
 
   const handleSubmit = () => {
@@ -133,6 +136,21 @@ const UserFormSheet: FC<ComponentProps<typeof Sheet> & Props> = ({
                   </Label>
                 ))}
               </div>
+            </FormControl>
+            <FormControl label="Select counter">
+              <Select value={data.counter_id?.toString() || ''} onValueChange={(value) => setData('counter_id', Number(value))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih counter" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {counters.map((c) => (
+                    <SelectItem key={c.id} value={c.id.toString()}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </FormControl>
           </form>
         </ScrollArea>

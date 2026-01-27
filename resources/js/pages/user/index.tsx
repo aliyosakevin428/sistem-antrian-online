@@ -99,6 +99,7 @@ const UserList: FC<Props> = ({ users, query }) => {
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role names</TableHead>
+              <TableHead>Counter Assigned</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -126,6 +127,7 @@ const UserList: FC<Props> = ({ users, query }) => {
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.roles?.flatMap((r) => r.name)?.join(', ')}</TableCell>
+                  <TableCell>{user.counter ? user.counter.name : '-'}</TableCell>
                   <TableCell>
                     <Button variant={'ghost'} size={'icon'}>
                       <Link href={route('user.show', user.id)}>

@@ -99,6 +99,7 @@ const CounterList: FC<Props> = ({ counters, query }) => {
                 </Button>
               </TableHead>
               <TableHead>Nama Loket</TableHead>
+              <TableHead>Layanan</TableHead>
               <TableHead>Keterangan</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -125,6 +126,7 @@ const CounterList: FC<Props> = ({ counters, query }) => {
                     </Button>
                   </TableCell>
                   <TableCell>{counter.name}</TableCell>
+                  <TableCell>{counter.services.map((service) => service.name).join(', ') || '-'}</TableCell>
                   <TableCell>
                     {counter.is_active !== undefined ? (
                       <span className={counter.is_active ? 'text-green-600' : 'text-red-600'}>{counter.is_active ? 'Aktif' : 'Nonaktif'}</span>

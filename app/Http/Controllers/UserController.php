@@ -7,6 +7,7 @@ use App\Http\Requests\BulkUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UploadUserMediaRequest;
+use App\Models\Counter;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,13 +23,14 @@ class UserController extends Controller
         $this->pass('index user');
 
         $data = User::query()
-            ->with(['media', 'roles'])
+            ->with(['media', 'roles', 'counter'])
             ->when($request->name, function($q, $v) {
                 $q->where('name', $v);
             });
 
         return Inertia::render('user/index', [
             'users' => $data->get(),
+            'counters' => Counter::get(),
             'query' => $request->input(),
             'roles' => Role::whereNot('name', "superadmin")->get()
         ]);
@@ -88,7 +90,7 @@ class UserController extends Controller
         $data = $request->validated();
         User::whereIn('id', $data['user_ids'])->update($data);
     }
-    
+
     public function bulkDelete(BulkDeleteUserRequest $request)
     {
         $this->pass('delete user');

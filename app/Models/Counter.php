@@ -30,10 +30,15 @@ class Counter extends Model
         'updated_at',
     ];
 
-    // public function services()
-    // {
-    //     return $this->belongsToMany(Service::class);
-    // }
+    public function services()
+    {
+        return $this->belongsToMany(Service::class);
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 
     // public function queueCalls()
     // {

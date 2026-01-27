@@ -40,4 +40,9 @@ class Service extends Model
         return $this->hasOne(QueueSetting::class);
     }
 
+    public function counters()
+    {
+        return $this->belongsToMany(Counter::class);
+    }
+
 }

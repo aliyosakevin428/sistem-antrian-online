@@ -45,11 +45,16 @@ export function AppSidebar() {
           items={[
             ...mainNavItems,
             {
-              title: 'Services',
+              title: 'Jenis Layanan',
               href: route('service.index'),
               icon: BookOpenCheck,
               available: menus.service,
             },
+          ]}
+          label="Dashboard"
+        />
+        <NavMain
+          items={[
             {
               title: 'Pengaturan Antrian',
               href: route('queue-setting.index'),
@@ -69,7 +74,7 @@ export function AppSidebar() {
               available: menus.counter,
             },
           ]}
-          label="Dashboard"
+          label="Antrian"
         />
         <NavMain
           items={[

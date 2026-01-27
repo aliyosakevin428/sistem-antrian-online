@@ -16,6 +16,8 @@ class UpdateCounterRequest extends FormRequest
         return [
             'name' => 'required|string|max:100',
             'is_active' => 'nullable|boolean',
+            'services' => 'nullable|array',
+            'services.*' => 'exists:services,id',
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Counter;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,10 +20,17 @@ class UserSeeder extends Seeder
             'email' => 'admin@gmail.com',
         ],[
             'password' => 'password',
+            'counter_id' => null,
         ]);
         $superadmin->assignRole('superadmin');
 
-        User::factory(5)->create()->each(function ($user) {
+        $counters = Counter::get();
+
+        User::factory(5)->create()->each(function ($user) use ($counters) {
+            $user->update([
+                'counter_id' => $counters->random()->id ?? null,
+            ]);
+
             $user->assignRole('user');
         });
     }

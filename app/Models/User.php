@@ -27,6 +27,7 @@ class User extends Authenticatable implements HasMedia
         'name',
         'email',
         'password',
+        'counter_id',
     ];
 
     /**
@@ -52,6 +53,11 @@ class User extends Authenticatable implements HasMedia
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function counter()
+    {
+        return $this->belongsTo(Counter::class);
     }
 
     public function getAvatarAttribute()

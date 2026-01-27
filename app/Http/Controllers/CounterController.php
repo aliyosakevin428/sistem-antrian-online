@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateCounterRequest;
 use App\Http\Requests\BulkUpdateCounterRequest;
 use App\Http\Requests\BulkDeleteCounterRequest;
 use App\Models\Counter;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -21,13 +22,14 @@ class CounterController extends Controller
         $this->pass("index counter");
 
         $data = Counter::query()
-            // ->with(['services'])
+            ->with(['services'])
             ->when($request->name, function($q, $v){
                 $q->where('name', $v);
             });
 
         return Inertia::render('counter/index', [
             'counters' => $data->get(),
+            'services' => Service::select( 'id','name')->get(),
             'query' => $request->input(),
             'permissions' => [
                 'canAdd' => $this->user->can("create counter"),
@@ -46,7 +48,13 @@ class CounterController extends Controller
         $this->pass("create counter");
 
         $data = $request->validated();
-        Counter::create($data);
+
+        $services = $data['services'] ?? [];
+        unset($data['services']);
+
+        $counter = Counter::create($data);
+
+        $counter->services()->sync($services);
     }
 
     /**
@@ -73,7 +81,14 @@ class CounterController extends Controller
         $this->pass("update counter");
 
         $data = $request->validated();
+
+        $services = $data['services'] ?? [];
+        unset($data['services']);
+
         $counter->update($data);
+
+        $counter->services()->sync($services);
+
     }
 
     /**

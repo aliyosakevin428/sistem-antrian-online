@@ -25,6 +25,7 @@ class StoreUserRequest extends FormRequest
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed',
+            'counter_id' => 'nullable|exists:counters,id',
         ];
     }
 }

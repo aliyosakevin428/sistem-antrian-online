@@ -1,3 +1,4 @@
+import { Counter } from './counter';
 import { Role } from './role';
 
 export interface User {
@@ -7,6 +8,7 @@ export interface User {
   avatar?: string;
   media?: Media[];
   roles?: Role[];
+  counter?: Counter;
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;

@@ -33,8 +33,8 @@ const ServiceList: FC<Props> = ({ services, query }) => {
 
   return (
     <AppLayout
-      title="Services"
-      description="Manage your services"
+      title="Daftar Layanan"
+      description="Kelola layanan untuk sistem antrian Anda."
       actions={[
         {
           title: capitalizeWords(mode) + ' view',

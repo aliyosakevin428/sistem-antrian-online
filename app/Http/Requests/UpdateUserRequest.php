@@ -26,7 +26,8 @@ class UpdateUserRequest extends FormRequest
             'name' => 'nullable',
             'email' => 'nullable|email|unique:users,email,'.$this->user->id,
             'roles' => 'nullable|array',
-            'roles.*' => 'exists:roles,name'
+            'roles.*' => 'exists:roles,name',
+            'counter_id' => 'nullable|exists:counters,id',
         ];
     }
 }
