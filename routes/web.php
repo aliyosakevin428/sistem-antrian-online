@@ -72,7 +72,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::put('queue_calls/bulk', [QueueCallsController::class, 'bulkUpdate'])->name('queue_calls.bulk.update');
     Route::delete('queue_calls/bulk', [QueueCallsController::class, 'bulkDelete'])->name('queue_calls.bulk.destroy');
-    Route::apiResource('queue_calls', QueueCallsController::class)->only(['index', 'destroy']); 
+    Route::post('queue_calls/call-next', [QueueCallsController::class, 'callNext'])
+    ->name('queue_calls.call_next');
+    Route::put('queue_calls/{queueCall}/finish', [QueueCallsController::class, 'finish'])
+    ->name('queue_calls.finish');
+
+    Route::apiResource('queue_calls', QueueCallsController::class)->only(['index', 'destroy']);
 });
 
 require __DIR__.'/settings.php';

@@ -55,53 +55,80 @@ class QueueCallsController extends Controller
     {
         return DB::transaction(function () use ($request) {
 
-        $user = auth()->user();
-        $counter = Counter::with('services')->findOrFail($request->counter_id);
+            $user = auth()->user();
+            $counter = Counter::with('services')->findOrFail($request->counter_id);
 
-        $serviceIds = $counter->services->pluck('id');
+            $serviceIds = $counter->services->pluck('id');
 
-        $queue = Queue::whereIn('service_id', $serviceIds)
-            ->where('status', 'waiting')
-            ->lockForUpdate()
-            ->orderBy('created_at')
-            ->first();
+            $activeCall = QueueCall::where('counter_id', $counter->id)
+                ->whereNull('finished_at')
+                ->lockForUpdate()
+                ->first();
 
-        if (!$queue) {
-            return back()->withErrors(['message' => 'Tidak ada antrian']);
-        }
+            if ($activeCall) {
 
-        $queue->update([
-            'status' => 'in_progress'
-        ]);
+                $activeCall->increment('call_number');
 
-        QueueCall::create([
-            'queue_id' => $queue->id,
-            'user_id' => $user->id,
-            'counter_id' => $counter->id,
-            'called_at' => now(),
-            'call_number' => 1,
-        ]);
+                $activeCall->update([
+                    'called_at' => now(),
+                ]);
 
-        return back()->with('success', 'Antrian dipanggil');;
+                return back()->with('success', 'Antrian dipanggil ulang');
+            }
+
+            $queue = Queue::whereIn('service_id', $serviceIds)
+                ->where('status', 'waiting')
+                ->lockForUpdate()
+                ->orderBy('created_at')
+                ->first();
+
+            if (!$queue) {
+                return back()->withErrors(['message' => 'Tidak ada antrian']);
+            }
+
+            $queue->update([
+                'status' => 'in_progress'
+            ]);
+
+            QueueCall::create([
+                'queue_id'    => $queue->id,
+                'user_id'     => $user->id,
+                'counter_id'  => $counter->id,
+                'called_at'   => now(),
+                'call_number' => 1,
+            ]);
+
+            return back()->with('success', 'Antrian dipanggil');
         });
     }
 
     /**
      * Mark the specified queue call as finished.
      */
-    public function finish(QueueCall $queueCall)
+    public function finish(Request $request, QueueCall $queueCall)
     {
-        $queueCall->update([
-            'finished_at' => now()
+
+        $request->validate([
+        'notes' => 'required|string|max:150',
         ]);
 
-        $queueCall->queue->update([
-            'status' => 'done'
-        ]);
-
-        if ($queueCall->finished_at) {
-            return back()->withErrors(['message' => 'Antrian sudah selesai']);
+        if ($queueCall->finished_at !== null) {
+            return back()->withErrors([
+                'message' => 'Antrian sudah selesai'
+            ]);
         }
+
+        DB::transaction(function () use ($queueCall, $request) {
+
+            $queueCall->update([
+                'finished_at' => now(),
+                'notes'       => $request->notes,
+            ]);
+
+            $queueCall->queue->update([
+                'status' => 'finished'
+            ]);
+        });
 
         return back()->with('success', 'Antrian selesai');
     }

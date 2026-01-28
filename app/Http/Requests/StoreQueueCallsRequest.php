@@ -19,7 +19,7 @@ class StoreQueueCallsRequest extends FormRequest
             'counter_id' => 'nullable',
             'called_at' => 'nullable',
             'finished_at' => 'nullable',
-            'notes' => 'required|string|max:255',
+            'notes' => 'required|string|max:150',
             'call_number' => 'nullable',
         ];
     }

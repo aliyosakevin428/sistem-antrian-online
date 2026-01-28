@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, BookOpenCheck, Building2, Database, KeySquare, LayoutGrid, ListOrdered, Settings, Users } from 'lucide-react';
+import { ArrowRightLeft, BookOpen, BookOpenCheck, Building2, Database, KeySquare, LayoutGrid, ListOrdered, Settings, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -76,7 +76,7 @@ export function AppSidebar() {
             {
               title: 'Antrian Dipanggil',
               href: route('queue_calls.index'),
-              icon: Users,
+              icon: ArrowRightLeft,
               available: menus.queue_call,
             },
           ]}
