@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Middleware\WithLandingPageMiddleware;
 use App\Models\Queue;
+use App\Models\QueueCall;
 use App\Models\QueueSetting;
 use App\Models\Service;
 use Illuminate\Http\Request;
@@ -20,7 +21,21 @@ class WelcomeController extends BaseController
 
     public function index()
     {
-        return Inertia::render('welcome/index');
+        $activeCalls = QueueCall::with(['queue', 'counter'])
+            ->whereNull('finished_at')
+            ->orderByDesc('updated_at')
+            ->get();
+
+        $recentCalls = QueueCall::with(['queue', 'counter'])
+            ->whereNotNull('finished_at')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return Inertia::render('welcome/index', [
+            'activeCalls' => $activeCalls,
+            'recentCalls' => $recentCalls,
+        ]);
     }
 
     public function about()

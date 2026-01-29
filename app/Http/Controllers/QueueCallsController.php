@@ -58,28 +58,25 @@ class QueueCallsController extends Controller
             $user = auth()->user();
             $counter = Counter::with('services')->findOrFail($request->counter_id);
 
-            $serviceIds = $counter->services->pluck('id');
-
             $activeCall = QueueCall::where('counter_id', $counter->id)
                 ->whereNull('finished_at')
+                ->latest('id')
                 ->lockForUpdate()
                 ->first();
 
             if ($activeCall) {
-
-                $activeCall->increment('call_number');
-
                 $activeCall->update([
-                    'called_at' => now(),
+                    'call_number' => $activeCall->call_number + 1,
+                    'called_at'   => now(),
                 ]);
 
                 return back()->with('success', 'Antrian dipanggil ulang');
             }
 
-            $queue = Queue::whereIn('service_id', $serviceIds)
+            $queue = Queue::whereIn('service_id', $counter->services->pluck('id'))
                 ->where('status', 'waiting')
-                ->lockForUpdate()
                 ->orderBy('created_at')
+                ->lockForUpdate()
                 ->first();
 
             if (!$queue) {
@@ -91,16 +88,17 @@ class QueueCallsController extends Controller
             ]);
 
             QueueCall::create([
-                'queue_id'    => $queue->id,
-                'user_id'     => $user->id,
-                'counter_id'  => $counter->id,
-                'called_at'   => now(),
-                'call_number' => 1,
+                'queue_id'   => $queue->id,
+                'user_id'    => $user->id,
+                'counter_id' => $counter->id,
+                'called_at'  => now(),
+                'call_number'=> 1,
             ]);
 
             return back()->with('success', 'Antrian dipanggil');
         });
     }
+
 
     /**
      * Mark the specified queue call as finished.
