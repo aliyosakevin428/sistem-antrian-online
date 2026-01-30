@@ -107,7 +107,7 @@ class QueueCallsController extends Controller
     {
 
         $request->validate([
-        'notes' => 'required|string|max:150',
+        'notes' => 'nullable|string|max:150',
         ]);
 
         if ($queueCall->finished_at !== null) {

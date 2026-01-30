@@ -1,6 +1,6 @@
 import { QueueCalls } from '@/types/queue_calls';
 import { router, usePage } from '@inertiajs/react';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import WelcomeLayout from './layouts/welcome-layout';
 
 type PageProps = {
@@ -11,19 +11,44 @@ type PageProps = {
 export default function Welcome() {
   const { activeCalls, recentCalls } = usePage<PageProps>().props;
 
-//   const speakText = (text: string) => {
-//     return new Promise<void>((resolve) => {
-//       const utterance = new SpeechSynthesisUtterance(text);
-//       utterance.lang = 'id-ID';
-//       utterance.rate = 0.9;
-
-//       utterance.onend = () => resolve();
-
-//       window.speechSynthesis.speak(utterance);
-//     });
-//   }
-
   const spokenCallsRef = useRef<Set<string>>(new Set());
+  const speechQueueRef = useRef<SpeechSynthesisUtterance[]>([]);
+  const isSpeakingRef = useRef(false);
+
+  const getIndonesianVoice = () => {
+    const voices = window.speechSynthesis.getVoices();
+
+    return (
+      voices.find((v) => v.lang === 'id-ID') ||
+      voices.find((v) => v.lang.includes('id')) ||
+      voices.find((v) => v.name.toLowerCase().includes('female')) ||
+      voices[0]
+    );
+  };
+
+  const processSpeechQueue = useCallback(() => {
+    if (isSpeakingRef.current) return;
+    if (!speechQueueRef.current.length) return;
+
+    const utterance = speechQueueRef.current.shift();
+    if (!utterance) return;
+
+    isSpeakingRef.current = true;
+
+    utterance.onend = () => {
+      isSpeakingRef.current = false;
+      processSpeechQueue();
+    };
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  useEffect(() => {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }, []);
 
   useEffect(() => {
     const unlockAudio = () => {
@@ -35,43 +60,41 @@ export default function Welcome() {
     window.addEventListener('click', unlockAudio);
   }, []);
 
+  useEffect(() => {
+    if (!activeCalls.length) return;
+    if (!window.speechSynthesis) return;
 
-    useEffect(() => {
-        if (!activeCalls.length) return;
-        if (!window.speechSynthesis) return;
+    activeCalls.forEach((call) => {
+      const uniqueKey = `${call.queue.id}-${call.called_at}`;
 
-        const speakQueue = async () => {
-        for (const call of activeCalls) {
-            const uniqueKey = `${call.queue.id}-${call.called_at}`;
+      if (spokenCallsRef.current.has(uniqueKey)) return;
 
-            if (spokenCallsRef.current.has(uniqueKey)) continue;
+      spokenCallsRef.current.add(uniqueKey);
 
-            spokenCallsRef.current.add(uniqueKey);
+      const text = `Nomor antrian ${call.queue.queue_number}~ silakan menuju ${call.counter.name}`;
 
-            const utterance = new SpeechSynthesisUtterance(`Nomor antrian ${call.queue.queue_number}, silakan menuju ${call.counter.name}`);
-
-            utterance.lang = 'id-ID';
-            utterance.rate = 0.9;
-
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(utterance);
-
-            await new Promise((resolve) => {
-            utterance.onend = resolve;
-            });
-        }
-    };
-
-    speakQueue();
-    }, [activeCalls]);
-
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = getIndonesianVoice();
+      utterance.lang = 'id-ID';
+      utterance.pitch = 1.6;
+      utterance.rate = 0.8;
+      utterance.volume = 1;
+      speechQueueRef.current.push(utterance);
+    });
+    processSpeechQueue();
+  }, [activeCalls, processSpeechQueue]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       router.reload({ only: ['activeCalls', 'recentCalls'] });
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const voices = window.speechSynthesis.getVoices();
+    console.log(voices);
   }, []);
 
   return (
@@ -87,7 +110,10 @@ export default function Welcome() {
 
                 <div className="mt-4 text-2xl text-green-400">{call.counter.name}</div>
 
-                <div className="mt-2 text-sm text-gray-400">Dipanggil ke-{call.call_number}</div>
+                <div className="mt-2 text-sm text-gray-400">
+                  Dipanggil ke-
+                  {call.call_number.toString().padStart(2, '0')}
+                </div>
               </div>
             ))}
           </div>

@@ -95,10 +95,10 @@ const QueueCallsList: FC<Props> = ({ queue_calls, query }) => {
               <TableHead>Nomor Antrian</TableHead>
               <TableHead>Nama Petugas</TableHead>
               <TableHead>Loket</TableHead>
+              <TableHead>Panggilan Ke</TableHead>
               <TableHead>Called At</TableHead>
               <TableHead>Finished At</TableHead>
               <TableHead>Catatan</TableHead>
-              <TableHead>Panggilan Ke</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -126,10 +126,10 @@ const QueueCallsList: FC<Props> = ({ queue_calls, query }) => {
                   <TableCell>{queue_calls.queue?.queue_number || '-'}</TableCell>
                   <TableCell>{queue_calls.user?.name || '-'}</TableCell>
                   <TableCell>{queue_calls.counter?.name || '-'}</TableCell>
+                  <TableCell>{queue_calls.call_number ? queue_calls.call_number.toString().padStart(2, '0') : '00'}</TableCell>
                   <TableCell>{queue_calls.called_at ? dayjs(queue_calls.called_at).format('DD MMM YYYY - HH:mm') : '-'}</TableCell>
                   <TableCell>{queue_calls.finished_at ? dayjs(queue_calls.finished_at).format('DD MMM YYYY - HH:mm') : '-'}</TableCell>
                   <TableCell>{queue_calls.notes}</TableCell>
-                  <TableCell>{queue_calls.call_number}</TableCell>
 
                   <TableCell>
                     {/* {permissions?.canShow && (
