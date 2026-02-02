@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             QueueSettingSeeder::class,
             QueueSeeder::class,
+            QueueCallsSeeder::class,
         ]);
     }
 }

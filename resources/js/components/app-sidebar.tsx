@@ -4,7 +4,19 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { ArrowRightLeft, BookOpen, BookOpenCheck, Building2, Database, KeySquare, LayoutGrid, ListOrdered, Settings, Users } from 'lucide-react';
+import {
+  ArrowRightLeft,
+  BookOpen,
+  BookOpenText,
+  Building2,
+  Database,
+  KeySquare,
+  LayoutGrid,
+  ListOrdered,
+  Settings,
+  Settings2,
+  Users,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -47,7 +59,7 @@ export function AppSidebar() {
             {
               title: 'Daftar Layanan',
               href: route('service.index'),
-              icon: BookOpenCheck,
+              icon: BookOpenText,
               available: menus.service,
             },
           ]}
@@ -58,7 +70,7 @@ export function AppSidebar() {
             {
               title: 'Pengaturan Antrian',
               href: route('queue-setting.index'),
-              icon: Database,
+              icon: Settings2,
               available: menus.queue_setting,
             },
             {

@@ -12,7 +12,7 @@ return [
     | Example: ['superadmin', 'admin', 'user']
     |
     */
-    
+
     'default-roles' => [
         'superadmin',
         'admin',
@@ -94,6 +94,54 @@ return [
         "dashboard" => [
             "profile" => ["*"],
             "documentation" => ["*"]
+        ],
+        "user" => [
+            "menu user" => ['superadmin', 'admin'],
+            "index user" => ['superadmin', 'admin'],
+            "show user" => ['superadmin', 'admin'],
+            "create user" => ['superadmin', 'admin'],
+            "update user" => ['superadmin', 'admin'],
+            "delete user" => ['superadmin', 'admin'],
+        ],
+        "service" => [
+            "menu service" => ['superadmin', 'admin'],
+            "index service" => ['superadmin', 'admin'],
+            "show service" => ['superadmin', 'admin'],
+            "create service" => ['superadmin', 'admin'],
+            "update service" => ['superadmin', 'admin'],
+            "delete service" => ['superadmin', 'admin'],
+        ],
+        "queue" => [
+            "menu queue" => ['superadmin', 'admin', 'user'],
+            "index queue" => ['superadmin', 'admin', 'user'],
+            "show queue" => ['superadmin', 'admin', 'user'],
+            "create queue" => ['superadmin', 'admin', 'user'],
+            "update queue" => ['superadmin', 'admin', 'user'],
+            "delete queue" => ['superadmin', 'admin', 'user'],
+        ],
+        "queue_setting" => [
+            "menu queue setting" => ['superadmin', 'admin'],
+            "index queue setting" => ['superadmin', 'admin'],
+            "show queue setting" => ['superadmin', 'admin'],
+            "create queue setting" => ['superadmin', 'admin'],
+            "update queue setting" => ['superadmin', 'admin'],
+            "delete queue setting" => ['superadmin', 'admin'],
+        ],
+        "counter" => [
+            "menu counter" => ['superadmin', 'admin', 'user'],
+            "index counter" => ['superadmin', 'admin', 'user'],
+            "show counter" => ['superadmin', 'admin', 'user'],
+            "create counter" => ['superadmin', 'admin', 'user'],
+            "update counter" => ['superadmin', 'admin', 'user'],
+            "delete counter" => ['superadmin', 'admin', 'user'],
+        ],
+        "queue_calls" => [
+            "menu queue calls" => ['superadmin', 'admin'],
+            "index queue calls" => ['superadmin', 'admin'],
+            "show queue calls" => ['superadmin', 'admin'],
+            "create queue calls" => ['superadmin', 'admin'],
+            "update queue calls" => ['superadmin', 'admin'],
+            "delete queue calls" => ['superadmin', 'admin'],
         ]
     ],
 
@@ -118,7 +166,7 @@ return [
     |
     | Controls social media authentication functionality via Laravel Socialite.
     | To use Google authentication, set these environment variables in .env:
-    | 
+    |
     | GOOGLE_CLIENT_ID=your-client-id-here
     | GOOGLE_CLIENT_SECRET=your-client-secret-here
     | GOOGLE_REDIRECT_URI=http://your-domain/auth/google/callback

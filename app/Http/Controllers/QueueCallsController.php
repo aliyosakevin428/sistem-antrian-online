@@ -22,7 +22,7 @@ class QueueCallsController extends Controller
      */
     public function index(Request $request)
     {
-        $this->pass("index queueCalls");
+        $this->pass("index queue_calls");
 
         $data = QueueCall::query()
             ->with(['queue.service', 'user', 'counter'])
@@ -137,7 +137,7 @@ class QueueCallsController extends Controller
      */
     public function destroy(QueueCall $queueCalls)
     {
-        $this->pass("delete queueCalls");
+        $this->pass("delete queue_calls");
 
         $queueCalls->delete();
     }
@@ -147,7 +147,7 @@ class QueueCallsController extends Controller
      */
     public function bulkUpdate(BulkUpdateQueueCallsRequest $request)
     {
-        $this->pass("update queueCalls");
+        $this->pass("update queue_calls");
 
         $data = $request->validated();
         $ids = $data['queue_calls_ids'];
@@ -161,7 +161,7 @@ class QueueCallsController extends Controller
      */
     public function bulkDelete(BulkDeleteQueueCallsRequest $request)
     {
-        $this->pass("delete queueCalls");
+        $this->pass("delete queue_calls");
 
         $data = $request->validated();
         QueueCall::whereIn('id', $data['queue_calls_ids'])->delete();
