@@ -160,5 +160,25 @@ class CounterController extends Controller
         $model->forceDelete();
     }
 
+    public function toggleStatus(Counter $counter)
+    {
+        if ($counter->is_active) {
+        // Masuk break
+        $counter->update([
+            'is_active' => false,
+            'break_started_at' => now(),
+        ]);
+        } else {
+            // Aktif kembali
+            $counter->update([
+                'is_active' => true,
+                'operational_started_at' => now(),
+                'break_started_at' => null,
+            ]);
+        }
+
+        return back();
+    }
+
 
 }

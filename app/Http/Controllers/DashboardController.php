@@ -14,7 +14,7 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        $counter = null;
+        $counterData = null;
         $currentCall = null;
         $waitingCount = 0;
 
@@ -35,10 +35,24 @@ class DashboardController extends Controller
                     ->where('status', 'waiting')
                     ->count();
                 }
+
+                $todayServed = QueueCall::where('counter_id', $counter->id)
+                    ->whereDate('created_at', today())
+                    ->count();
+
+                $counterData = [
+                    'id' => $counter->id,
+                    'name' => $counter->name,
+                    'is_active' => $counter->is_active,
+                    'waiting' => $waitingCount,
+                    'today_served' => $todayServed,
+                    'operational_started_at' => $counter->operational_started_at,
+                    'break_started_at' => $counter->break_started_at,
+                ];
         }
 
         return Inertia::render('dashboard/index', [
-            'counter' => $counter,
+            'counter' => $counterData,
             'currentCall' => $currentCall,
             'waitingCount' => $waitingCount,
         ]);

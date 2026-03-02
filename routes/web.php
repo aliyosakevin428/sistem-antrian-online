@@ -69,6 +69,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('counter/{counter}/restore', [CounterController::class, 'restore'])->name('counter.restore');
     Route::delete('counter/{counter}/force-delete', [CounterController::class, 'forceDelete'])->name('counter.force-delete');
     Route::apiResource('counter', CounterController::class);
+    Route::patch('counter/{counter}/toggle-status', [CounterController::class, 'toggleStatus'])->name('counter.toggle_status');
 
     Route::put('queue_calls/bulk', [QueueCallsController::class, 'bulkUpdate'])->name('queue_calls.bulk.update');
     Route::delete('queue_calls/bulk', [QueueCallsController::class, 'bulkDelete'])->name('queue_calls.bulk.destroy');

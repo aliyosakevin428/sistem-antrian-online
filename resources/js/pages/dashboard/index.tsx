@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import DateTimeWidget from './widget/date-time-widget';
 import QueueWidget from './widget/queue-widget';
 import UserInfoWidget from './widget/user-info-widget';
+import CounterStatusWidget from './widget/counter-status-widget';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -43,7 +44,13 @@ export default function Dashboard() {
       <div className="grid gap-6 lg:grid-cols-2">
         <UserInfoWidget />
         <DateTimeWidget />
-        {counter && <QueueWidget counter={counter} currentCall={currentCall} waitingCount={waitingCount} />}
+        {counter && (
+          <>
+            <QueueWidget counter={counter} currentCall={currentCall} waitingCount={waitingCount} />
+
+            <CounterStatusWidget counter={counter} />
+          </>
+        )}
       </div>
     </AppLayout>
   );
