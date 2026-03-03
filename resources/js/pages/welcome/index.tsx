@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button';
+import { useQueueAnnouncement } from '@/hooks/useQueueAnnouncement';
 import { QueueCalls } from '@/types/queue_calls';
 import { router, usePage } from '@inertiajs/react';
 import { Maximize, Minimize } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import WelcomeLayout from './layouts/welcome-layout';
 
 type PageProps = {
@@ -13,82 +14,24 @@ type PageProps = {
 export default function Welcome() {
   const { activeCalls, recentCalls } = usePage<PageProps>().props;
 
+  const { announce } = useQueueAnnouncement();
+
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showButton, setShowButton] = useState(true);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const displayRef = useRef<HTMLDivElement | null>(null);
 
-  const spokenCallsRef = useRef<Set<string>>(new Set());
-  const speechQueueRef = useRef<SpeechSynthesisUtterance[]>([]);
-  const isSpeakingRef = useRef(false);
-
-  const getIndonesianVoice = () => {
-    const voices = window.speechSynthesis.getVoices();
-
-    return (
-      voices.find((v) => v.lang === 'id-ID') ||
-      voices.find((v) => v.lang.includes('id')) ||
-      voices[0]
-    );
-  };
-
-  const processSpeechQueue = useCallback(() => {
-    if (isSpeakingRef.current) return;
-    if (!speechQueueRef.current.length) return;
-
-    const utterance = speechQueueRef.current.shift();
-    if (!utterance) return;
-
-    isSpeakingRef.current = true;
-
-    utterance.onend = () => {
-      isSpeakingRef.current = false;
-      processSpeechQueue();
-    };
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  }, []);
-
-  useEffect(() => {
-    window.speechSynthesis.onvoiceschanged = () => {
-      window.speechSynthesis.getVoices();
-    };
-  }, []);
-
-  useEffect(() => {
-    const unlockAudio = () => {
-      const utterance = new SpeechSynthesisUtterance('');
-      window.speechSynthesis.speak(utterance);
-      window.removeEventListener('click', unlockAudio);
-    };
-
-    window.addEventListener('click', unlockAudio);
-  }, []);
-
   useEffect(() => {
     if (!activeCalls.length) return;
-    if (!window.speechSynthesis) return;
 
     activeCalls.forEach((call) => {
       const uniqueKey = `${call.queue.id}-${call.called_at}`;
 
-      if (spokenCallsRef.current.has(uniqueKey)) return;
+      const text = `Nomor antrian ${call.queue.queue_number}, Silakan menuju ${call.counter.name}`;
 
-      spokenCallsRef.current.add(uniqueKey);
-
-      const text = `Nomor antrian ${call.queue.queue_number}~ silakan menuju ${call.counter.name}`;
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.voice = getIndonesianVoice();
-      utterance.lang = 'id-ID';
-      utterance.pitch = 1.6;
-      utterance.rate = 0.7;
-      utterance.volume = 1;
-      speechQueueRef.current.push(utterance);
+      announce(uniqueKey, text);
     });
-    processSpeechQueue();
-  }, [activeCalls, processSpeechQueue]);
+  }, [activeCalls, announce]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,11 +40,6 @@ export default function Welcome() {
 
     return () => clearInterval(interval);
   }, []);
-
-  //   useEffect(() => {
-  //     const voices = window.speechSynthesis.getVoices();
-  //     console.log(voices);
-  //   }, []);
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
