@@ -52,13 +52,12 @@ export default function QueueWidget({ counter, currentCall, waitingCount }: Prop
         {!counter.is_active && (
           <div className="flex items-center justify-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
             <AlertTriangle className="h-4 w-4" />
-            Counter sedang dalam status break
+            Counter sedang {counter.break_started_at ? 'break' : 'off'}
           </div>
         )}
       </CardHeader>
 
       <CardContent className="space-y-6 text-center">
-        {/* Waiting Info */}
         <div className="rounded-xl bg-muted/40 px-4 py-3">
           <p className="text-sm text-muted-foreground">Antrian Menunggu</p>
           <p className="text-3xl font-bold">{waitingCount}</p>
@@ -66,14 +65,12 @@ export default function QueueWidget({ counter, currentCall, waitingCount }: Prop
 
         {currentCall ? (
           <>
-            {/* Current Queue */}
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Sedang Dilayani</p>
               <p className="text-5xl font-extrabold tracking-wide">{currentCall.queue.queue_number}</p>
               <p className="text-xs text-muted-foreground">Sudah dipanggil {currentCall.call_number}x</p>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex justify-center gap-4">
               <Button onClick={callNext} variant="secondary" disabled={!counter.is_active}>
                 🔁 Panggil Lagi

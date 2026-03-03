@@ -187,13 +187,20 @@ class CounterController extends Controller
     public function toggleStatus(Counter $counter)
     {
         if ($counter->is_active) {
-        // Masuk break
-        $counter->update([
-            'is_active' => false,
-            'break_started_at' => now(),
-        ]);
+            $status = request('status', 'break');
+
+            if ($status === 'break') {
+                $counter->update([
+                    'is_active' => false,
+                    'break_started_at' => now(),
+                ]);
+            } elseif ($status === 'off') {
+                $counter->update([
+                    'is_active' => false,
+                    'break_started_at' => null,
+                ]);
+            }
         } else {
-            // Aktif kembali
             $counter->update([
                 'is_active' => true,
                 'operational_started_at' => now(),

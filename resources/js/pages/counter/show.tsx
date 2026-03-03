@@ -45,19 +45,22 @@ const ShowCounter: FC<Props> = ({ counter }) => {
         </CardHeader>
 
         <div className="grid gap-6 px-6 pb-6 md:grid-cols-2">
-          {/* STATUS */}
           <div className="rounded-xl border bg-muted/30 p-5">
             <p className="text-xs tracking-wide text-muted-foreground uppercase">Status Operasional</p>
 
             <div className="mt-2 flex items-center justify-between">
-              <span className="text-2xl font-bold">{counter.is_active ? 'Active' : 'Break'}</span>
+              <span className="text-2xl font-bold">{counter.is_active ? 'Active' : counter.break_started_at ? 'Break' : 'Off'}</span>
 
               <span
                 className={`rounded-full px-3 py-1 text-xs font-medium ${
-                  counter.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  counter.is_active
+                    ? 'bg-green-100 text-green-700'
+                    : counter.break_started_at
+                      ? 'bg-orange-100 text-orange-700'
+                      : 'bg-red-100 text-red-700'
                 }`}
               >
-                {counter.is_active ? 'Beroperasi' : 'Istirahat'}
+                {counter.is_active ? 'Beroperasi' : counter.break_started_at ? 'Istirahat' : 'Tidak Beroperasi'}
               </span>
             </div>
 
@@ -85,8 +88,7 @@ const ShowCounter: FC<Props> = ({ counter }) => {
               </p>
             )}
           </div>
-
-          {/* STATISTIK */}
+          
           <div className="rounded-xl border bg-muted/30 p-5">
             <p className="text-xs tracking-wide text-muted-foreground uppercase">Statistik Hari Ini</p>
 
